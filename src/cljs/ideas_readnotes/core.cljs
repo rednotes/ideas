@@ -29,26 +29,56 @@
          [nav-link "#/" "Home" :home collapsed?]
          [nav-link "#/about" "About" :about collapsed?]]]])))
 
+(defn set-html [html]
+  {:dangerouslySetInnerHTML {:__html html}})
+
 (defn about-page []
   [:div.container
    [:div.row
-    [:div.col-md-12
+    [:div.col-md-3]
+    [:div.col-md-6
      "this is the story of ideas-readnotes... work in progress"]]])
+
+(def some-form
+  [:form.form-horizontal
+   [:div.form-group.row
+    [:div.col-sm-12
+     [:input#title.form-control {:type "text" :placeholder "Idea (make the most out of 140 characters)"}]
+     ]
+    ]
+   [:div.form-group.row
+    [:div.col-sm-12
+     [:textarea#description.form-control {:rows 5 :placeholder "Explanation of the idea (markup with markdown)"}]]
+    ]
+   [:div.form-group.row
+    [:div.col-sm-12
+     [:button.btn.btn-block.btn-primary-outline.col-sm-12 {:type "submit"} "Send"]]]])
+
+(def sample-idea
+  [:div [:h2 "Idea #0"]
+  [:p "Sample idea description in 140 symbols, explanation hidden"]])
+
+(def sample-idea-2
+  [:div [:h2 "Idea #n"]
+   [:p "aoe uasoetnh iaotsh aoseunth uasonet hu Sample idea description in 140 symbols, explanation hidden"]])
 
 (defn home-page []
   [:div.container
-   [:div.jumbotron
-    [:h1 "Welcome to ideas-readnotes"]
-    [:p "Time to start building your site!"]
-    [:p [:a.btn.btn-primary.btn-lg {:href "http://luminusweb.net"} "Learn more »"]]]
    [:div.row
-    [:div.col-md-12
-     [:h2 "Welcome to ClojureScript"]]]
-   (when-let [docs (session/get :docs)]
-     [:div.row
-      [:div.col-md-12
-       [:div {:dangerouslySetInnerHTML
-              {:__html (md->html docs)}}]]])])
+    [:div.col-md-6
+     (when-let [info (session/get :info)]
+       (set-html (md->html info)))]
+    [:div.col-md-6 some-form]]
+   [:div.row
+    [:div.col-md-4 sample-idea]
+    [:div.col-md-4 sample-idea-2]
+    [:div.col-md-4 sample-idea]
+    [:div.col-md-4 sample-idea]
+    [:div.col-md-4 sample-idea]
+    [:div.col-md-4 sample-idea]
+    [:div.col-md-4 sample-idea]
+    ]]
+  )
 
 (def pages
   {:home #'home-page
@@ -81,10 +111,11 @@
 ;; -------------------------
 ;; Initialize app
 (defn fetch-docs! []
-  (GET (str js/context "/docs") {:handler #(session/put! :docs %)}))
+  (GET (str js/context "/docs") {:handler #(session/put! :docs %)})
+  (GET (str js/context "/info") {:handler #(session/put! :info %)}))
 
 (defn mount-components []
-  (r/render [#'navbar] (.getElementById js/document "navbar"))
+  ;; (r/render [#'navbar] (.getElementById js/document "navbar")) 
   (r/render [#'page] (.getElementById js/document "app")))
 
 (defn init! []
