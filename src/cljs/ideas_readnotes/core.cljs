@@ -24,9 +24,9 @@
         {:on-click #(swap! collapsed? not)} "☰"]
        [:div.collapse.navbar-toggleable-xs
         (when-not @collapsed? {:class "in"})
-        [:a.navbar-brand {:href "#/"} "ideas-readnotes"]
+        [:a.navbar-brand {:href "#/"} "ideas.readnot.es"]
         [:ul.nav.navbar-nav
-         [nav-link "#/" "Home" :home collapsed?]
+         [nav-link "#/" "Ideas" :home collapsed?]
          [nav-link "#/about" "About" :about collapsed?]]]])))
 
 (defn set-html [html]
@@ -43,13 +43,10 @@
   [:form.form-horizontal
    [:div.form-group.row
     [:div.col-sm-12
-     [:input#title.form-control {:type "text" :placeholder "Idea (make the most out of 140 characters)"}]
-     ]
-    ]
+     [:input#title.form-control {:type "text" :placeholder "Idea (make the most out of 140 characters)"}]]]
    [:div.form-group.row
     [:div.col-sm-12
-     [:textarea#description.form-control {:rows 5 :placeholder "Explanation of the idea (markup with markdown)"}]]
-    ]
+     [:textarea#description.form-control {:rows 5 :placeholder "Explanation of the idea (markup with markdown)"}]]]
    [:div.form-group.row
     [:div.col-sm-12
      [:button.btn.btn-block.btn-primary-outline.col-sm-12 {:type "submit"} "Send"]]]])
@@ -64,25 +61,31 @@
 
 (defn home-page []
   [:div.container
+   [:hr]
    [:div.row
     [:div.col-md-6
      (when-let [info (session/get :info)]
        (set-html (md->html info)))]
     [:div.col-md-6 some-form]]
+   [:hr]
    [:div.row
     [:div.col-md-4 sample-idea]
     [:div.col-md-4 sample-idea-2]
+    [:div.col-md-4 sample-idea]]
+   [:div.row
     [:div.col-md-4 sample-idea]
     [:div.col-md-4 sample-idea]
-    [:div.col-md-4 sample-idea]
-    [:div.col-md-4 sample-idea]
-    [:div.col-md-4 sample-idea]
-    ]]
-  )
+    [:div.col-md-4 sample-idea]]])
+
+(defn idea-page []
+  [:div.container
+   [:div (str (session/get :id) " idea page")]
+   sample-idea-2])
 
 (def pages
   {:home #'home-page
-   :about #'about-page})
+   :about #'about-page
+   :idea #'idea-page})
 
 (defn page []
   [(pages (session/get :page))])
@@ -97,6 +100,9 @@
 (secretary/defroute "/about" []
   (session/put! :page :about))
 
+(secretary/defroute #"/idea/(\d+)" [id]
+  (do (session/put! :page :idea)
+      (session/put! :id id)))
 ;; -------------------------
 ;; History
 ;; must be called after routes have been defined
@@ -115,7 +121,7 @@
   (GET (str js/context "/info") {:handler #(session/put! :info %)}))
 
 (defn mount-components []
-  ;; (r/render [#'navbar] (.getElementById js/document "navbar")) 
+  (r/render [#'navbar] (.getElementById js/document "navbar")) 
   (r/render [#'page] (.getElementById js/document "app")))
 
 (defn init! []
