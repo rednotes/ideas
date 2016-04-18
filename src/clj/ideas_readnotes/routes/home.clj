@@ -9,5 +9,6 @@
 
 (defroutes home-routes
   (GET "/" [] (home-page))
-  (GET "/docs" [] (response/ok (-> "docs/docs.md" io/resource slurp))))
+  (GET "/docs" [] (response/ok (-> "docs/docs.md" io/resource slurp)))
+  (GET "/info" [] (response/charset (response/ok (-> "docs/info.md" io/resource slurp)) "UTF-8")))
 
