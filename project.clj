@@ -28,7 +28,12 @@
                  [reagent-utils "0.1.7"]
                  [secretary "1.2.3"]
                  [cljs-ajax "0.5.4"]
-                 [luminus-log4j "0.1.3"]]
+                 [luminus-log4j "0.1.3"]
+                 [metosin/compojure-api "1.1.0"]
+                 [ring/ring-json "0.4.0"]
+                 [ring-json-response "0.2.0"]
+                 [metosin/ring-swagger "0.22.7"]
+                 [metosin/ring-swagger-ui "2.1.8-M1"]]
 
   :min-lein-version "2.0.0"
 
