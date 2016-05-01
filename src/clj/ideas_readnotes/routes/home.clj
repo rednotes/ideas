@@ -19,14 +19,14 @@
 (defn sample-idea [id]
   {:id id :title "Основная мысль" :description "long long описание"})
 
+(def ideas
+  [(sample-idea 1) (sample-idea 2) (sample-idea 3)])
+
 (defn get-idea [id]
   (ideas id))
 
 (defn create-idea [idea]
   (println idea))
-
-(def ideas
-  [(sample-idea 1) (sample-idea 2) (sample-idea 3)])
 
 (defn get-all-ideas []
   (json-response ideas))
