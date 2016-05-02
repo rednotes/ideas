@@ -39,7 +39,7 @@
     [:div.col-md-6
      "this is the story of ideas-readnotes... ork in progress"]]])
 
-(def some-form
+(defn some-form []
   [:form.form-horizontal
    [:div.form-group.row
     [:div.col-sm-12
@@ -59,16 +59,26 @@
   [:div [:h2 "Idea #n"]
    [:p "aoe uasoetnh iaotsh aoseunth uasonet hu Sample idea description in 140 symbols, explanation hidden"]])
 
-(defn print-resp [response]
-  (println  response))
+(def ideas (r/atom []))
+
+;; (defn print-resp [response]
+;;   (println  response))
+
+(defn update-ideas [response]
+  (reset! ideas response))
 
 (defn handle-click []
   (GET "/api/ideas" {:response-format :json
                      :keywords? true
-                     :handler print-resp}))
+                     :handler update-ideas}))
 
 (handle-click)
 
+;; (println ideas)
+
+(defn idea-template [idea]
+  [:div [:h2 "Idea #" (:id idea)]
+   [:p (:title idea)]])
 
 (defn home-page []
   [:div.container
@@ -77,7 +87,7 @@
     [:div.col-md-6
      (when-let [info (session/get :info)]
        (set-html (md->html info)))]
-    [:div.col-md-6 some-form]]
+    [:div.col-md-6 [some-form]]]
    [:hr]
    [:div.row
     [:button.btn.btn-block.col-sm-12
@@ -85,11 +95,11 @@
      [:i.fa.fa-refresh]]]
    [:hr]
    [:div.row
-    [:div.col-md-4 sample-idea-2]
-    [:div.col-md-4 sample-idea]]
-   [:div.row
-    [:div.col-md-4 sample-idea]
-    [:div.col-md-4 sample-idea]]])
+    [:div (for [item @ideas]
+            ^{:key {:id item}}
+            [:div.col-md-4 (idea-template item)])]]
+   [:hr]
+   ])
 
 (defn idea-page []
   [:div.container

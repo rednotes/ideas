@@ -25,7 +25,7 @@
   {:id id :title "Основная мысль" :description "long long описание"})
 
 (def ideas
-  [(sample-idea 1) (sample-idea 2) (sample-idea 3)])
+   (map sample-idea (range 1 12)))
 
 (defn get-idea [id]
   (ideas id))
@@ -35,7 +35,6 @@
 
 (defn get-all-ideas []
   (j-response ideas))
-
 
 
 (s/defapi api-routes
