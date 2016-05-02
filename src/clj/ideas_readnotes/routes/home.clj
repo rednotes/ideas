@@ -13,8 +13,13 @@
              [json-response :refer [json-response]]]
             [schema.core :as sc]))
 
-(defn home-page []
-  (layout/render "home.html"))
+(defn j-response [body]
+  (response/charset (json-response body) "UTF-8"))
+
+(sc/defschema Idea
+  {:id sc/Int
+   :title sc/Str
+   :description sc/Str})
 
 (defn sample-idea [id]
   {:id id :title "Основная мысль" :description "long long описание"})
@@ -29,12 +34,9 @@
   (println idea))
 
 (defn get-all-ideas []
-  (json-response ideas))
+  (j-response ideas))
 
-(sc/defschema Idea
-  {:id sc/Int
-   :title sc/Str
-   :description sc/Str})
+
 
 (s/defapi api-routes
   {:swagger {:ui "/api-docs"
@@ -49,16 +51,19 @@
     (s/GET "/ping" [] (response/ok {:ping "pong"}))
     (s/context "/ideas" []
       (s/GET "/" []
-        (response/ok (get-all-ideas)))
+        (get-all-ideas))
       (s/context "/:id" []
         :path-params [id :- Long]
         (s/GET "/" []
           ;; :return Idea
-          (response/ok (get-idea id))))
+          (j-response (get-idea id))))
       (s/POST "/" []
         :body [idea Idea]
         (response/ok (create-idea idea)))
       )))
+
+(defn home-page []
+  (layout/render "home.html"))
 
 (defroutes home-routes
   (GET "/" [] (home-page))

@@ -37,7 +37,7 @@
    [:div.row
     [:div.col-md-3]
     [:div.col-md-6
-     "this is the story of ideas-readnotes... work in progress"]]])
+     "this is the story of ideas-readnotes... ork in progress"]]])
 
 (def some-form
   [:form.form-horizontal
@@ -53,11 +53,22 @@
 
 (def sample-idea
   [:div [:h2 "Idea #0"]
-  [:p "Sample idea description in 140 symbols, explanation hidden"]])
+  [:p "Some information Sample idea description in 140 symbols, explanation hidden"]])
 
 (def sample-idea-2
   [:div [:h2 "Idea #n"]
    [:p "aoe uasoetnh iaotsh aoseunth uasonet hu Sample idea description in 140 symbols, explanation hidden"]])
+
+(defn print-resp [response]
+  (println  response))
+
+(defn handle-click []
+  (GET "/api/ideas" {:response-format :json
+                     :keywords? true
+                     :handler print-resp}))
+
+(handle-click)
+
 
 (defn home-page []
   [:div.container
@@ -69,11 +80,14 @@
     [:div.col-md-6 some-form]]
    [:hr]
    [:div.row
-    [:div.col-md-4 sample-idea]
+    [:button.btn.btn-block.col-sm-12
+     {:on-click handle-click}
+     [:i.fa.fa-refresh]]]
+   [:hr]
+   [:div.row
     [:div.col-md-4 sample-idea-2]
     [:div.col-md-4 sample-idea]]
    [:div.row
-    [:div.col-md-4 sample-idea]
     [:div.col-md-4 sample-idea]
     [:div.col-md-4 sample-idea]]])
 
@@ -118,7 +132,11 @@
 ;; Initialize app
 (defn fetch-docs! []
   (GET (str js/context "/docs") {:handler #(session/put! :docs %)})
-  (GET (str js/context "/info") {:handler #(session/put! :info %)}))
+  (GET (str js/context "/info") {:handler #(session/put! :info %)})
+  (GET "/api/ideas" {:response-format :json
+                     :keywords? true
+                     :handler #(session/put! :ideas %)})
+  )
 
 (defn mount-components []
   (r/render [#'navbar] (.getElementById js/document "navbar")) 
