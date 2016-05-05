@@ -21,7 +21,7 @@
     (fn []
       [:nav.navbar.navbar-light.bg-faded
        [:button.navbar-toggler.hidden-sm-up
-        {:on-click #(swap! collapsed? not)} "☰"]
+        {:on-click #(swap! collapsed? not)} [:i.fa.fa-bars]]
        [:div.collapse.navbar-toggleable-xs
         (when-not @collapsed? {:class "in"})
         [:a.navbar-brand {:href "#/"} "ideas.readnot.es"]
