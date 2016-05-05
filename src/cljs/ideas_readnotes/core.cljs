@@ -65,35 +65,57 @@
 ;;   (println  response))
 
 (defn update-ideas [response]
-  (reset! ideas response))
+  (reset! ideas (sort #(> (:id %1) (:id %2)) response)))
 
-(defn handle-click []
+(defn update-ideas-list []
   (GET "/api/ideas" {:response-format :json
                      :keywords? true
                      :handler update-ideas}))
 
-(handle-click)
+(update-ideas-list)
 
 ;; (println ideas)
+(def current-idea (r/atom ""))
+
+(defn show-idea [idea]
+  (reset! current-idea idea))
 
 (defn idea-template [idea]
-  [:div [:h2 "Idea #" (:id idea)]
+  [:div
+   [:div.row ; {:style {:display "inline-block"}}
+    [:h3.col-xs-10 "Idea #" (:id idea)]
+    [:button.btn.btn-secondary.btn-sm.col-xs-1
+     {:data-toggle "modal"
+      :data-target "#ideaModal"
+      :on-click #(show-idea idea)}
+     [:i.fa.fa-lightbulb-o]]
+    ]
    [:p (:title idea)]])
+
+(defn modal []
+  [:div.modal.fade {:id "ideaModal"}
+   [:div.modal-dialog {:role "document"}
+    [:div.modal-content
+     [:div.modal-header "#" (:id @current-idea) ": "
+      (:title @current-idea)]
+     [:div.modal-body (set-html (md->html (:description @current-idea)))]
+     [:div.modal-footer
+      [:button.btn.col-xs-12.btn-secondary {:data-dismiss "modal"} "Close"]]]]])
 
 (defn home-page []
   [:div.container
-   [:hr]
    [:div.row
     [:div.col-md-6
      (when-let [info (session/get :info)]
        (set-html (md->html info)))]
     [:div.col-md-6 [some-form]]]
-   [:hr]
    [:div.row
-    [:button.btn.btn-block.col-sm-12
-     {:on-click handle-click}
-     [:i.fa.fa-refresh]]]
+    [:div.col-md-12
+     [:button.btn.btn-block.col-xs-12
+      {:on-click update-ideas-list}
+      [:i.fa.fa-refresh]]]]
    [:hr]
+   [modal]
    [:div.row
     [:div (for [item @ideas]
             ^{:key {:id item}}

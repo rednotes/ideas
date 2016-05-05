@@ -22,10 +22,22 @@
    :description sc/Str})
 
 (defn sample-idea [id]
-  {:id id :title "Основная мысль" :description "long long описание"})
+  {:id id :title "Основная мысль" :description (str "
+
+### heading ####
+
+
+
+
+
+ <a href=\"google.ru\">link</a>
+* list
+* of items
+
+описание идеи " id)})
 
 (def ideas
-   (map sample-idea (range 1 12)))
+  (map sample-idea (range 1 112)))
 
 (defn get-idea [id]
   (ideas id))
