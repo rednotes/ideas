@@ -64,18 +64,28 @@
 ;; (defn print-resp [response]
 ;;   (println  response))
 
+(def update-status (r/atom ""))
+
 (defn update-ideas [response]
-  (reset! ideas (sort #(> (:id %1) (:id %2)) response)))
+  (do (reset! ideas (sort #(> (:id %1) (:id %2)) response))
+      (reset! update-status "btn-success")
+      (js/setTimeout #(reset! update-status "") 1000)))
+
+(defn handle-error [info]
+  (do (reset! update-status "btn-danger")
+      (js/setTimeout #(reset! update-status "") 1000)))
 
 (defn update-ideas-list []
   (GET "/api/ideas" {:response-format :json
                      :keywords? true
-                     :handler update-ideas}))
+                     :handler update-ideas
+                     :error-handler handle-error}))
 
 (update-ideas-list)
 
 ;; (println ideas)
 (def current-idea (r/atom ""))
+
 
 (defn show-idea [idea]
   (reset! current-idea idea))
@@ -111,8 +121,9 @@
     [:div.col-md-6 [some-form]]]
    [:div.row
     [:div.col-md-12
-     [:button.btn.btn-block.col-xs-12
-      {:on-click update-ideas-list}
+     [:button.btn.btn-secondary.btn-block.col-xs-12
+      {:class @update-status
+       :on-click update-ideas-list}
       [:i.fa.fa-refresh]]]]
    [:hr]
    [modal]
