@@ -7,7 +7,7 @@
 
 (def pool-spec
   {:adapter :postgresql
-   :jdbc-url (or "postgresql://localhost/ideas" (env :database-url))
+   :jdbc-url (or (env :database-url) "postgresql://localhost/ideas")
    :init-size 1
    :min-idle 1
    :max-idle 4
