@@ -33,7 +33,12 @@
                  [ring/ring-json "0.4.0"]
                  [ring-json-response "0.2.0"]
                  [metosin/ring-swagger "0.22.7"]
-                 [metosin/ring-swagger-ui "2.1.8-M1"]]
+                 [metosin/ring-swagger-ui "2.1.8-M1"]
+                 [luminus-migrations "0.1.2"]
+                 [conman "0.5.1"]
+                 [migratus "0.8.15"]
+                 [org.postgresql/postgresql "9.4-1206-jdbc4"]
+                 [luminus-nrepl "0.1.4"]]
 
   :min-lein-version "2.0.0"
 
@@ -43,7 +48,10 @@
 
   :main ideas-readnotes.core
 
+  :migratus {:store :database :db ~(get (System/getenv) "DATABASE_URL")}
+
   :plugins [[lein-cprop "1.0.1"]
+            [migratus-lein "0.2.8"]
             [lein-cljsbuild "1.1.1"]]
   :clean-targets ^{:protect false}
   [:target-path [:cljsbuild :builds :app :compiler :output-dir] [:cljsbuild :builds :app :compiler :output-to]]
@@ -56,11 +64,11 @@
       :output-dir "target/cljsbuild/public/js/out"
       :externs ["react/externs/react.js"]
       :pretty-print true}}}}
-  
+
   :target-path "target/%s/"
   :profiles
   {:uberjar {:omit-source true
-             
+
               :prep-tasks ["compile" ["cljsbuild" "once"]]
               :cljsbuild
               {:builds
@@ -71,7 +79,7 @@
                   :pretty-print false
                   :closure-warnings
                   {:externs-validation :off :non-standard-jsdoc :off}}}}} 
-             
+
              :aot :all
              :uberjar-name "ideas-readnotes.jar"
              :source-paths ["env/prod/clj"]
@@ -89,7 +97,7 @@
                                  [lein-figwheel "0.5.2"]
                                  [lein-doo "0.1.6"]
                                  [org.clojure/clojurescript "1.8.40"]]
-                  
+
                    :cljsbuild
                    {:builds
                     {:app
@@ -106,7 +114,7 @@
                        :main "ideas-readnotes.doo-runner"
                        :optimizations :whitespace
                        :pretty-print true}}}} 
-                  
+
                   :figwheel
                   {:http-server-root "public"
                    :nrepl-port 7002

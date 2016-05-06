@@ -1,8 +1,8 @@
 (ns ideas-readnotes.routes.home
   (:require [clojure.java.io :as io]
-            [compojure
-             [core :refer [context defroutes GET POST routes]]]
             [compojure.api.sweet :as s]
+            [compojure.core :refer [context defroutes GET POST routes]]
+            [ideas-readnotes.db.core :as db]
             [ideas-readnotes.layout :as layout]
             [ring.middleware.json :refer [wrap-json-response]]
             [ring.swagger
@@ -36,18 +36,14 @@
 
 описание идеи " id)})
 
-(def ideas
-  (map sample-idea (range 1 112)))
-
 (defn get-idea [id]
-  (ideas id))
+  (db/get-idea {:id id}))
 
 (defn create-idea [idea]
-  (println idea))
+  (db/create-idea! (assoc idea :status 0)))
 
 (defn get-all-ideas []
-  (j-response ideas))
-
+  (j-response (db/get-all-ideas)))
 
 (s/defapi api-routes
   {:swagger {:ui "/api-docs"
