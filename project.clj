@@ -128,5 +128,5 @@
                   :injections [(require 'pjstadig.humane-test-output)
                                (pjstadig.humane-test-output/activate!)]}
    :project/test {:resource-paths ["env/dev/resources" "env/test/resources"]}
-   :profiles/dev {}
-   :profiles/test {}})
+   :profiles/dev {:env {:database-url "jdbc:postgresql://localhost/ideas"}}
+   :profiles/test {:env {:database-url "jdbc:postgresql://localhost/ideas"}}})
