@@ -39,30 +39,13 @@
     [:div.col-md-6
      "this is the story of ideas-readnotes... ork in progress"]]])
 
-(defn some-form []
-  [:form.form-horizontal
-   [:div.form-group.row
-    [:div.col-sm-12
-     [:input#title.form-control {:type "text" :placeholder "Idea (make the most out of 140 characters)"}]]]
-   [:div.form-group.row
-    [:div.col-sm-12
-     [:textarea#description.form-control {:rows 5 :placeholder "Explanation of the idea (markup with markdown)"}]]]
-   [:div.form-group.row
-    [:div.col-sm-12
-     [:button.btn.btn-block.btn-primary-outline.col-sm-12 {:type "submit"} "Send"]]]])
+(def new-title (r/atom ""))
+(def new-description (r/atom ""))
 
-(def sample-idea
-  [:div [:h2 "Idea #0"]
-  [:p "Some information Sample idea description in 140 symbols, explanation hidden"]])
-
-(def sample-idea-2
-  [:div [:h2 "Idea #n"]
-   [:p "aoe uasoetnh iaotsh aoseunth uasonet hu Sample idea description in 140 symbols, explanation hidden"]])
+(defn send-idea [title description]
+  (POST "/api/ideas" {:params {:id -1 :title title :description description}}))
 
 (def ideas (r/atom []))
-
-;; (defn print-resp [response]
-;;   (println  response))
 
 (def update-status (r/atom ""))
 
@@ -80,8 +63,34 @@
                      :keywords? true
                      :handler update-ideas
                      :error-handler handle-error}))
-
 (update-ideas-list)
+
+(defn some-form []
+  [:div.form-horizontal
+   [:div.form-group.row
+    [:div.col-sm-12
+     [:input#title.form-control
+      {:type "text"
+       :value @new-title
+       :on-change #(reset! new-title (-> % .-target .-value))
+       :placeholder "Idea (make the most out of 140 characters)"}]]]
+   [:div.form-group.row
+    [:div.col-sm-12
+     [:textarea#description.form-control
+      {:rows 5
+       :placeholder "Explanation of the idea (markup with markdown)"
+       :value @new-description
+       :on-change #(reset! new-description (-> % .-target .-value))}]]]
+   [:div.form-group.row
+    [:div.col-sm-12
+     [:div (set-html (md->html @new-description))]]]
+   [:div.form-group.row
+    [:div.col-sm-12
+     [:button.btn.btn-block.btn-primary-outline.col-sm-12
+      {:on-click #((do (send-idea @new-title @new-description)
+                       (reset! new-title "")
+                       (reset! new-description "")
+                       (update-ideas-list)))} "Send"]]]])
 
 ;; (println ideas)
 (def current-idea (r/atom ""))
@@ -137,7 +146,7 @@
 (defn idea-page []
   [:div.container
    [:div (str (session/get :id) " idea page")]
-   sample-idea-2])
+   ])
 
 (def pages
   {:home #'home-page
