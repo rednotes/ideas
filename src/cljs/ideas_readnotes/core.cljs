@@ -121,6 +121,10 @@
      [:div.modal-footer
       [:button.btn.col-xs-12.btn-secondary {:data-dismiss "modal"} "Close"]]]]])
 
+(defn status-info []
+  [:div.row.text-xs-center
+   [:h2 "Я заработал на ваших идеях " [:strong (count @ideas)] " долларов"]])
+
 (defn home-page []
   [:div.container
    [:div.row
@@ -134,6 +138,8 @@
       {:class @update-status
        :on-click update-ideas-list}
       [:i.fa.fa-refresh]]]]
+   [:hr]
+   [status-info]
    [:hr]
    [modal]
    [:div.row
@@ -185,9 +191,9 @@
 (defn fetch-docs! []
   (GET (str js/context "/docs") {:handler #(session/put! :docs %)})
   (GET (str js/context "/info") {:handler #(session/put! :info %)})
-  (GET "/api/ideas" {:response-format :json
-                     :keywords? true
-                     :handler #(session/put! :ideas %)})
+  ;; (GET "/api/ideas" {:response-format :json
+  ;;                    :keywords? true
+  ;;                    :handler #(session/put! :ideas %)})
   )
 
 (defn mount-components []
