@@ -90,7 +90,8 @@
       {:on-click #((do (send-idea @new-title @new-description)
                        (reset! new-title "")
                        (reset! new-description "")
-                       (update-ideas-list)))} "Send"]]]])
+                       (js/setTimeout #(update-ideas-list) 100)))}
+      "Send"]]]])
 
 ;; (println ideas)
 (def current-idea (r/atom ""))
