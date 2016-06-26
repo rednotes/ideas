@@ -90,7 +90,7 @@
       {:on-click #((do (send-idea @new-title @new-description)
                        (reset! new-title "")
                        (reset! new-description "")
-                       (js/setTimeout #(update-ideas-list) 100)))}
+                       (js/setTimeout (fn [] (update-ideas-list)) 100)))}
       "Send"]]]])
 
 ;; (println ideas)
