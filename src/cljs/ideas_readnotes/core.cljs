@@ -46,6 +46,7 @@
   (POST "/api/ideas" {:params {:id -1 :title title :description description}}))
 
 (def ideas (r/atom []))
+(def current-aphorism (r/atom ""))
 
 (def update-status (r/atom ""))
 
@@ -58,12 +59,23 @@
   (do (reset! update-status "btn-danger")
       (js/setTimeout #(reset! update-status "") 1000)))
 
+
+(defn update-aphorism []
+  (GET "/api/aphorism" {:response-format :json
+                        :keywords? true
+                        :handler #(reset! current-aphorism %)
+                        :error-handler handle-error}))
+
 (defn update-ideas-list []
-  (GET "/api/ideas" {:response-format :json
-                     :keywords? true
-                     :handler update-ideas
-                     :error-handler handle-error}))
+  (do
+    (GET "/api/ideas" {:response-format :json
+                       :keywords?       true
+                       :handler         update-ideas
+                       :error-handler   handle-error})
+    (update-aphorism)))
+
 (update-ideas-list)
+(update-aphorism)
 
 (defn some-form []
   [:div.form-horizontal
@@ -96,7 +108,6 @@
 ;; (println ideas)
 (def current-idea (r/atom ""))
 
-
 (defn show-idea [idea]
   (reset! current-idea idea))
 
@@ -124,7 +135,7 @@
 
 (defn status-info []
   [:div.row.text-xs-center
-   [:h2 "Я заработал на ваших идеях " [:strong (count @ideas)] " долларов"]])
+   [:h2 @current-aphorism]])
 
 (defn home-page []
   [:div.container
