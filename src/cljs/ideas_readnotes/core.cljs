@@ -26,6 +26,8 @@
         (when-not @collapsed? {:class "in"})
         [:a.navbar-brand {:href "#/"} "ideas.readnot.es"]
         [:ul.nav.navbar-nav
+         [:li.nav-item
+          [:a.nav-link {:href "http://rednot.es" :target "_blank"} "Blog"]]
          [nav-link "#/" "Ideas" :home collapsed?]
          [nav-link "#/about" "About" :about collapsed?]]]])))
 
